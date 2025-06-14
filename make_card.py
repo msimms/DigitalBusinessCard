@@ -2,7 +2,7 @@ import argparse
 import qrcode
 from PIL import Image, ImageDraw, ImageFont
 
-def create_vcard_qr(name, phone, email, org=None, title=None, website=None, social=None, logo_path=None, output_file=None):
+def create_vcard_qr(name, phone, email, org=None, title=None, website=None, social=None, logo_path=None, font_name="Arial", output_file="vcard_qr.png"):
     vcard = f"""BEGIN:VCARD
 VERSION:3.0
 FN:{name}
@@ -47,7 +47,7 @@ EMAIL:{email}"""
     text_lines = [name, title, org]
     font_size = 48
     try:
-        font = ImageFont.truetype("arial.ttf", font_size)
+        font = ImageFont.truetype(font_name + ".ttf", font_size)
     except:
         font = ImageFont.load_default(font_size)
 
@@ -60,6 +60,7 @@ EMAIL:{email}"""
     text_height = 0
     max_line_width = 0
 
+    # Add the lines below the QR image
     for line in text_lines:
         bbox = draw.textbbox((0, 0), line, font=font)
         line_width = bbox[2] - bbox[0]
@@ -70,11 +71,11 @@ EMAIL:{email}"""
     total_height = qr_height + text_height
     canvas_width = max(qr_width, max_line_width + text_padding * 2)
 
-    # Create canvas
+    # Create a canvas
     canvas = Image.new("RGB", (canvas_width, total_height), "white")
     canvas.paste(qr_img, ((canvas_width - qr_width) // 2, 0))
 
-    # Draw text
+    # Draw the text
     draw = ImageDraw.Draw(canvas)
     y = qr_height + text_padding
     for i, line in enumerate(text_lines):
@@ -84,7 +85,7 @@ EMAIL:{email}"""
         y = (qr_height + text_padding + (i * font_size))
         draw.text((x, y), line, font=font, fill="black")
 
-    # Save output
+    # Save the output
     canvas.save(output_file)
     print(f"QR code saved to {output_file}")
 
@@ -100,6 +101,7 @@ def main():
     parser.add_argument("--website", type=str, action="store", default=None, help="A website for the card.", required=False)
     parser.add_argument("--social", type=str, action="store", default=None, help="A social URL for the card.", required=False)
     parser.add_argument("--logo_path", type=str, action="store", default=None, help="The logo to paste in the middle of the image.", required=False)
+    parser.add_argument("--font_name", type=str, action="store", default="Arial", help="The font for the summary lines below the code.", required=False)
     parser.add_argument("--output", type=str, action="store", default="vcard_qr.png", help="The output file.", required=False)
 
     try:
@@ -108,7 +110,8 @@ def main():
         parser.error(e)
         sys.exit(1)
 
-    create_vcard_qr(args.name, args.phone, args.email, org=args.org, title=args.title, website=args.website, social=args.social, logo_path=args.logo_path, output_file=args.output)
+    create_vcard_qr(args.name, args.phone, args.email, org=args.org, title=args.title, website=args.website, social=args.social,
+        logo_path=args.logo_path, font_name=args.font_name, output_file=args.output)
 
 if __name__=="__main__":
     main()
