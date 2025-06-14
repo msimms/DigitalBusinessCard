@@ -32,7 +32,8 @@ EMAIL:{email}"""
     # Load and resize the logo
     if logo_path is not None:
         logo = Image.open(logo_path)
-        qr_width, qr_height = qr_img.size
+        qr_width = qr_img.width
+        qr_height = qr_img.height
         logo_size = int(qr_width * 0.2)  # Logo covers 20% of QR width
         logo = logo.resize((logo_size, logo_size), Image.LANCZOS)
 
