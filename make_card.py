@@ -2,7 +2,7 @@ import argparse
 import qrcode
 from PIL import Image, ImageDraw, ImageFont
 
-def create_vcard_qr(name, phone, email, org=None, title=None, website=None, logo_path=None, output_file=None):
+def create_vcard_qr(name, phone, email, org=None, title=None, website=None, social=None, logo_path=None, output_file=None):
     vcard = f"""BEGIN:VCARD
 VERSION:3.0
 FN:{name}
@@ -15,6 +15,8 @@ EMAIL:{email}"""
         vcard += f"\nTITLE:{title}"
     if website:
         vcard += f"\nURL:{website}"
+    if social:
+        vcard += f"\nX-SOCIALPROFILE:{social}"
 
     vcard += "\nEND:VCARD"
 
@@ -96,6 +98,7 @@ def main():
     parser.add_argument("--org", type=str, action="store", default=None, help="The organizational name for the card.", required=False)
     parser.add_argument("--title", type=str, action="store", default=None, help="The individual's title for the card.", required=False)
     parser.add_argument("--website", type=str, action="store", default=None, help="A website for the card.", required=False)
+    parser.add_argument("--social", type=str, action="store", default=None, help="A social URL for the card.", required=False)
     parser.add_argument("--logo_path", type=str, action="store", default=None, help="The logo to paste in the middle of the image.", required=False)
     parser.add_argument("--output", type=str, action="store", default="vcard_qr.png", help="The output file.", required=False)
 
@@ -105,7 +108,7 @@ def main():
         parser.error(e)
         sys.exit(1)
 
-    create_vcard_qr(args.name, args.phone, args.email, org=args.org, title=args.title, website=args.website, logo_path=args.logo_path, output_file=args.output)
+    create_vcard_qr(args.name, args.phone, args.email, org=args.org, title=args.title, website=args.website, social=args.social, logo_path=args.logo_path, output_file=args.output)
 
 if __name__=="__main__":
-	main()
+    main()
