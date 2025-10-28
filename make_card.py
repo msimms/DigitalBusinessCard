@@ -3,11 +3,13 @@ import qrcode
 from PIL import Image, ImageDraw, ImageFont
 
 def create_vcard_qr(name, phone, email, org=None, title=None, website=None, social=None, logo_path=None, font_name="Arial", output_file="vcard_qr.png"):
+    split_name = ';'.join(name.split(' ')[::-1])
     vcard = f"""BEGIN:VCARD
 VERSION:3.0
 FN:{name}
+N:{split_name}
 TEL;TYPE=CELL:{phone}
-EMAIL:{email}"""
+EMAIL;TYPE=WORK:{email}"""
     
     if org:
         vcard += f"\nORG:{org}"
